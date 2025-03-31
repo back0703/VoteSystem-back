@@ -21,6 +21,13 @@ public class VoteController {
             @RequestParam String[] options,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
+        // 校验时间逻辑
+        if (endTime.isBefore(startTime)) {
+            throw new IllegalArgumentException("结束时间不能早于开始时间");
+        }
+        if (endTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("结束时间不能早于当前时间");
+        }
         String voteId = "vote_" + System.currentTimeMillis();
         Map<String, Integer> results = new ConcurrentHashMap<>();
         for (String option : options) {
@@ -40,10 +47,10 @@ public class VoteController {
     @PostMapping("/vote")
     public String castVote(@RequestParam String voteId, @RequestParam String option) {
         Vote vote = votes.get(voteId);
+        LocalDateTime now = LocalDateTime.now();
         if (vote == null) {
             return "投票未找到！";
         }
-        LocalDateTime now = LocalDateTime.now();
         if (now.isBefore(vote.getStartTime())) {
             return "投票尚未开始";
         }

@@ -1,11 +1,14 @@
 package com.example.votesystem;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Vote {
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private String id;
     private String title;
     private List<String> options;
