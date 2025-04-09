@@ -15,6 +15,7 @@ public class Vote {
     private Map<String, Integer> results;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Map<String, String> voterIPs = new ConcurrentHashMap<>(); // 记录IP和投票选项
 
     public Vote(String id, String title, List<String> options, Map<String, Integer> results) {
         this.id = id;
@@ -72,5 +73,21 @@ public class Vote {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Map<String, String> getVoterIPs() {
+        return voterIPs;
+    }
+
+    public void setVoterIPs(Map<String, String> voterIPs) {
+        this.voterIPs = voterIPs;
     }
 }

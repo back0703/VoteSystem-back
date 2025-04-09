@@ -1,6 +1,6 @@
 package com.example.votesystem;
 
-import com.example.votesystem.Vote;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +45,10 @@ public class VoteController {
 
     // 参与投票
     @PostMapping("/vote")
-    public String castVote(@RequestParam String voteId, @RequestParam String option) {
+    public String castVote(@RequestParam String voteId,
+                           @RequestParam String option,
+                           // 注入HttpServletRequest
+                           HttpServletRequest request) {
         Vote vote = votes.get(voteId);
         LocalDateTime now = LocalDateTime.now();
         if (vote == null) {
@@ -57,8 +60,29 @@ public class VoteController {
         if (now.isAfter(vote.getEndTime())) {
             return "投票已结束";
         }
+        // IP校验
+        String ip = getClientIp(request); // 自定义方法获取真实IP
+        if (vote.getVoterIPs().containsKey(ip)) {
+            return "每个IP只能投票一次";
+        }
         vote.getResults().merge(option, 1, Integer::sum);
+        vote.getVoterIPs().put(ip, option); // 记录IP和选项
         return "投票成功！";
+    }
+
+    // 获取客户端真实IP（处理代理）
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip.split(",")[0]; // 处理多级代理的情况
     }
 
     // 查看投票结果

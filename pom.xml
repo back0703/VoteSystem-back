@@ -17,7 +17,7 @@
         <relativePath/>
     </parent>
 
-    <!-- 您的依赖项 -->
+    <!-- 依赖项 -->
     <dependencies>
         <!-- Spring Boot Starter Web -->
         <dependency>
@@ -29,6 +29,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!-- Spring Boot Servlet -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
